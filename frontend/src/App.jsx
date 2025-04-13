@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import WheelCanvas from './components/WheelCanvas';
 import ControlPanel from './components/ControlPanel';
 import ResultLog from './components/ResultLog';
 import FrequencyChart from './components/FrequencyChart';
 import { spinWheel, getPrediction } from './services/api';
+
+const STRATEGIES = ["random", "repeat-last", "hot", "cold"];
 
 const App = () => {
   const [result, setResult] = useState(null);
@@ -14,15 +16,20 @@ const App = () => {
   const [betType, setBetType] = useState("number");
   const [wins, setWins] = useState(0);
   const [spins, setSpins] = useState(0);
-  const [fullScreen, setFullScreen] = useState(false);
+  const [autoMode, setAutoMode] = useState(false);
+  const [summary, setSummary] = useState(null);
+  const [comparisonResults, setComparisonResults] = useState([]);
+  const autoCounter = useRef(0);
 
-  const handleSpin = async () => {
-    const pred = await getPrediction(strategy);
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  const runSingleSpin = async (strategyOverride = null) => {
+    const pred = await getPrediction(strategyOverride || strategy);
     setPrediction(pred);
 
     const spinData = await spinWheel();
     setResult(spinData);
-    setHistory((prev) => [spinData, ...prev.slice(0, 49)]);
+    setHistory((prev) => [spinData, ...prev.slice(0, 99)]);
 
     let win = false;
     if (betType === "number") {
@@ -39,6 +46,37 @@ const App = () => {
 
     if (win) setWins((w) => w + 1);
     setSpins((s) => s + 1);
+
+    return { win, spinData };
+  };
+
+  const startAutoplay = async () => {
+    autoCounter.current = 0;
+    setAutoMode(true);
+    const startBalance = balance;
+    let localWins = 0;
+
+    while (autoCounter.current < 1000 && autoMode) {
+      const { win } = await runSingleSpin();
+      if (win) localWins++;
+      autoCounter.current++;
+      await delay(25); // fast loop
+    }
+
+    const endBalance = balance;
+    setSummary({
+      strategy,
+      spins: autoCounter.current,
+      wins: localWins,
+      accuracy: ((localWins / autoCounter.current) * 100).toFixed(1),
+      net: endBalance - startBalance,
+    });
+
+    setAutoMode(false);
+  };
+
+  const stopAutoplay = () => {
+    setAutoMode(false);
   };
 
   const downloadCSV = () => {
@@ -53,23 +91,54 @@ const App = () => {
     link.click();
   };
 
+  const compareStrategies = async () => {
+    const results = [];
+
+    for (const strat of STRATEGIES) {
+      let tempBalance = 100;
+      let tempWins = 0;
+
+      for (let i = 0; i < 1000; i++) {
+        const pred = await getPrediction(strat);
+        const spinData = await spinWheel();
+
+        let win = false;
+        if (betType === "number") {
+          win = pred.prediction === spinData.pocket;
+          tempBalance += win ? 35 : -1;
+        } else if (betType === "color") {
+          win = spinData.color === pred.prediction;
+          tempBalance += win ? 1 : -1;
+        } else if (betType === "odd-even") {
+          const actual = spinData.pocket === 0 ? "zero" : spinData.pocket % 2 === 0 ? "even" : "odd";
+          win = pred.prediction === actual;
+          tempBalance += win ? 1 : -1;
+        }
+
+        if (win) tempWins++;
+      }
+
+      results.push({
+        strategy: strat,
+        wins: tempWins,
+        accuracy: (tempWins / 1000 * 100).toFixed(1),
+        net: tempBalance - 100,
+      });
+    }
+
+    setComparisonResults(results);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
       <h1 className="text-3xl font-bold mb-4">🎯 SpinSight</h1>
 
-      <div className={`transition-all ${fullScreen ? 'w-full h-screen' : 'w-[420px]'} bg-black rounded-2xl shadow-xl`}>
+      <div className="w-[420px] bg-black rounded-2xl shadow-xl">
         <WheelCanvas spinResult={result} history={history} />
       </div>
 
-      <button
-        onClick={() => setFullScreen(!fullScreen)}
-        className="mt-3 px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-700 transition"
-      >
-        {fullScreen ? "Exit Fullscreen" : "Go Fullscreen"}
-      </button>
-
       <ControlPanel
-        onSpin={handleSpin}
+        onSpin={runSingleSpin}
         strategy={strategy}
         setStrategy={setStrategy}
         betType={betType}
@@ -90,15 +159,70 @@ const App = () => {
         </div>
       )}
 
+      <div className="flex gap-3 mt-4">
+        <button
+          onClick={autoMode ? stopAutoplay : startAutoplay}
+          className={`px-4 py-2 rounded ${
+            autoMode ? "bg-red-600 hover:bg-red-700" : "bg-lime-600 hover:bg-lime-700"
+          } transition`}
+        >
+          {autoMode ? "⛔ Stop Autoplay" : "▶️ Start 1000 Spins"}
+        </button>
+
+        <button
+          onClick={compareStrategies}
+          className="px-4 py-2 rounded bg-orange-500 hover:bg-orange-600 transition"
+        >
+          🧪 Compare Strategies
+        </button>
+
+        <button
+          onClick={downloadCSV}
+          className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 transition"
+        >
+          ⬇️ Export History
+        </button>
+      </div>
+
+      {summary && (
+        <div className="mt-6 text-center bg-gray-800 p-4 rounded-xl w-full max-w-lg">
+          <h3 className="text-xl font-semibold mb-2">📈 Autoplay Summary</h3>
+          <p><strong>Strategy:</strong> {summary.strategy}</p>
+          <p><strong>Spins:</strong> {summary.spins}</p>
+          <p><strong>Wins:</strong> {summary.wins}</p>
+          <p><strong>Accuracy:</strong> {summary.accuracy}%</p>
+          <p><strong>Net Profit:</strong> ${summary.net}</p>
+        </div>
+      )}
+
+      {comparisonResults.length > 0 && (
+        <div className="mt-6 w-full max-w-3xl bg-gray-800 p-4 rounded-xl">
+          <h3 className="text-xl font-semibold mb-3">📊 Strategy Comparison (1000 spins each)</h3>
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-gray-600">
+                <th className="py-1">Strategy</th>
+                <th>Wins</th>
+                <th>Accuracy</th>
+                <th>Net Profit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonResults.map((res, idx) => (
+                <tr key={idx} className="border-t border-gray-700">
+                  <td className="py-1">{res.strategy}</td>
+                  <td>{res.wins}</td>
+                  <td>{res.accuracy}%</td>
+                  <td className={res.net >= 0 ? "text-green-400" : "text-red-400"}>${res.net}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <ResultLog history={history} />
       <FrequencyChart history={history} />
-
-      <button
-        onClick={downloadCSV}
-        className="mt-6 px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 transition"
-      >
-        ⬇️ Export History
-      </button>
     </div>
   );
 };
