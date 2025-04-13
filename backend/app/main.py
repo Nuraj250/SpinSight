@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.simulator import simulate_spin
-from app.predictor import predict_next
+from app.predictor import *
 
 app = FastAPI()
 
