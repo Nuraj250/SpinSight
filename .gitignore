@@ -1,0 +1,36 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment/config
+*.env
+.env.*
+
+# Logs
+*.log
+
+# Test / coverage
+.coverage
+htmlcov/
+coverage.xml
+*.pytest_cache/
+
+# Packaging
+*.egg
+*.egg-info/
+dist/
+build/
