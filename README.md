@@ -42,7 +42,7 @@
 
 ```bash
 # Clone this repo
-git clone https://github.com/yourusername/spinsight.git
+git clone https://github.com/Nuraj250/spinsight.git
 cd spinsight
 
 # Frontend Setup
