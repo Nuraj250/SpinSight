@@ -2,53 +2,46 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  BarElement,
-  Tooltip,
   CategoryScale,
   LinearScale,
+  BarElement,
+  Tooltip,
+  Legend
 } from 'chart.js';
 
-ChartJS.register(BarElement, Tooltip, CategoryScale, LinearScale);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const FrequencyChart = ({ history }) => {
-  const freqMap = {};
-  history.forEach((item) => {
-    const n = item.pocket;
-    freqMap[n] = (freqMap[n] || 0) + 1;
-  });
-
-  const sortedKeys = Object.keys(freqMap).sort((a, b) => freqMap[b] - freqMap[a]);
+  const counts = Array(37).fill(0);
+  history.forEach((h) => counts[h.pocket]++);
 
   const data = {
-    labels: sortedKeys,
+    labels: [...Array(37).keys()],
     datasets: [
       {
         label: 'Frequency',
-        data: sortedKeys.map((k) => freqMap[k]),
-        backgroundColor: 'rgba(255,99,132,0.6)',
-        borderColor: 'rgba(255,99,132,1)',
-        borderWidth: 1,
+        data: counts,
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
       },
     ],
   };
 
   const options = {
+    responsive: true,
     plugins: {
-      legend: { display: false },
+      legend: { display: false }
     },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          precision: 0,
-        },
+        ticks: { stepSize: 1 },
       },
     },
   };
 
   return (
-    <div style={{ width: 500, margin: '30px auto' }}>
-      <h3>📊 Number Frequency</h3>
+    <div className="card mt-4 p-3">
+      <h5>📊 Frequency Chart</h5>
       <Bar data={data} options={options} />
     </div>
   );
