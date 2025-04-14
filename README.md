@@ -1,102 +1,139 @@
-# 🎯 SpinSight – Realistic Roulette Prediction Simulator
+# 🎰 SpinSight – Smart Roulette Simulator
 
-SpinSight is a powerful, interactive roulette prediction simulator built with **React** and **Python (FastAPI)**. It simulates a real-world roulette wheel using physics-driven logic and visualizations, offering AI-based prediction strategies and analytics.
-
----
-
-## 🧠 Features
-
-### 🎡 Visual Roulette Wheel
-- Built with **react-konva**
-- Animated wheel and ball motion
-- Highlights **hot** (frequent) and **cold** (rare/unseen) numbers visually
-
-### 🎯 Prediction System
-- Supports multiple prediction strategies:
-  - `random`
-  - `repeat-last`
-  - `hot`
-  - `cold`
-- Prediction displayed and compared against result
-
-### 🎰 Bet Types
-- Choose bet types:
-  - `number`
-  - `color` (red/black/green)
-  - `odd/even`
-
-### 💰 Balance & Accuracy Tracking
-- Tracks player balance (starting from $100)
-- Tracks total wins, total spins, and prediction accuracy %
-
-### 🔁 Autoplay Mode
-- Simulate **1000 spins automatically** using current strategy
-- Real-time updating of balance, win rate, and results
-
-### 📊 Strategy Comparison
-- Run **side-by-side 1000-spin simulation** for each strategy
-- Shows: win %, total wins, net profit/loss
-
-### 📜 Spin History
-- Log of previous spins with:
-  - Pocket number
-  - Color
-  - Ball speed
-  - Wheel speed
-  - Friction
-
-### 📈 Frequency Chart
-- Interactive bar chart using `chart.js`
-- Visualizes frequency of numbers landed
-
-### 📥 Export to CSV
-- One-click download of full spin history
-
-### 🔲 Fullscreen Wheel Mode
-- Toggle fullscreen for immersive visual experience
+**SpinSight** is a casino-style roulette simulator powered by React and Python. It includes smart prediction strategies, user guessing, and automatic 1000-spin simulations to test performance. Perfect for testing strategies, visualizing outcomes, and simulating real casino logic.
 
 ---
 
-## 🛠 Tech Stack
+## 🔮 Features
 
-| Frontend       | Backend       |
-|----------------|---------------|
-| React          | Python        |
-| Konva (canvas) | FastAPI       |
-| Chart.js       | Uvicorn       |
-| Axios          |               |
+- 🎡 Realistic wheel animation (popup modal)
+- 🧠 Strategy-based predictions (Random, Repeat Last, Hot, Cold)
+- 🔢 Manual number guessing (0–36)
+- 🏁 1000-spin autoplay with win/loss tracking
+- 📊 Frequency and history chart
+- 💸 Balance tracker & accuracy meter
+- 🎉 Win animation with confetti + sound
+- 📋 Strategy comparison (accuracy & net gain)
+- ⚙️ Built with React, Bootstrap, Flask
+
+---
+
+## 🛠️ Tech Stack
+
+| Frontend | Backend |
+|----------|---------|
+| React + Bootstrap | Python + Flask |
+| Konva.js (for wheel) | REST API (spin + predict) |
+| Axios | Deep learning / rule-based strategy logic |
+| Confetti + SoundFX | JSON logging |
 
 ---
 
 ## 🚀 Getting Started
 
-### ▶️ Backend (Python + FastAPI)
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate  # or source venv/bin/activate
-pip install -r requirements.txt
-python -m app.main  # Runs with uvicorn under the hood
-```
+### ✅ Prerequisites
 
-### ▶️ Frontend (React + Bootstrap)
+- Node.js `v18+`
+- Python `3.9+`
+
+---
+
+### 📦 Installation
+
 ```bash
+# Clone this repo
+git clone https://github.com/yourusername/spinsight.git
+cd spinsight
+
+# Frontend Setup
 cd frontend
 npm install
+
+# Backend Setup
+cd ../backend
+python -m venv venv
+source venv/bin/activate  # (or venv\Scripts\activate on Windows)
+pip install -r requirements.txt
+```
+
+---
+
+### ▶️ Running the App
+
+In two terminals:
+
+```bash
+# Terminal 1: Backend
+cd backend
+python main.py
+
+# Terminal 2: Frontend
+cd frontend
 npm start
 ```
 
----
-
-## 📦 Coming Soon
-- 🏆 Leaderboard (save top strategy runs)
-- 🎮 Manual betting system (number, color input)
-- 📊 Deployment to Vercel / Heroku
-- 🤖 AI-optimized adaptive strategies
+App runs at: http://localhost:3000  
+Backend runs at: http://localhost:8000
 
 ---
 
-## 🧠 Created by
-Built with ❤️ to simulate, analyze, and understand roulette spin dynamics.
+## 🧠 Strategies Explained
 
-Ready to predict the spin? Let SpinSight do the math 🎯
+| Strategy      | Logic Description                           |
+|---------------|----------------------------------------------|
+| Random        | Pure RNG, no memory                         |
+| Repeat Last   | Predicts same as last spin                  |
+| Hot           | Picks most frequently hit number so far     |
+| Cold          | Picks least hit number (0-included)         |
+
+---
+
+## 🎨 Customization
+
+- Add your own prediction strategies in `/backend/strategy.py`
+- Style the app via `App.css` (Bootstrap + custom casino theme)
+- Replace chip icon: `/src/assets/chip.png`
+- Add leaderboard in `StrategyComparison.jsx`
+
+---
+
+## 🔊 Media Credits
+
+- 🎵 Sound: `win.mp3` from freesound.org
+- 🎨 Icon: Custom generated casino chip
+- 🎡 Wheel: Konva.js animation with ball physics
+
+---
+
+## 📁 Project Structure
+
+```
+spinsight/
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── services/
+│   │   ├── assets/
+│   │   └── App.jsx
+│   ├── public/
+│   └── package.json
+│
+├── backend/
+│   ├── main.py
+│   ├── strategy.py
+│   ├── utils/
+│   └── requirements.txt
+```
+
+---
+
+## 📖 User Guide
+
+See `USER_GUIDE.md` for detailed manual (how to play, strategy usage, tips).
+
+---
+
+## 📄 License
+
+MIT © 2025 – Built with ❤️ for roulette strategy testing

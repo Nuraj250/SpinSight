@@ -4,32 +4,30 @@ const StrategyComparison = ({ results }) => {
   if (!results.length) return null;
 
   return (
-    <div className="card mt-4">
-      <div className="card-header">📊 Strategy Comparison (1000 Spins Each)</div>
-      <div className="card-body">
-        <table className="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Strategy</th>
-              <th>Total Wins</th>
-              <th>Accuracy (%)</th>
-              <th>Net Profit</th>
+    <div className="mt-5">
+      <h5 className="text-warning">🏆 Strategy Comparison</h5>
+      <table className="table table-dark table-striped border border-warning mt-3">
+        <thead className="table-light text-dark">
+          <tr>
+            <th>Strategy</th>
+            <th>Accuracy</th>
+            <th>Net Gain</th>
+            <th>Total Spins</th>
+          </tr>
+        </thead>
+        <tbody>
+          {results.map((row, idx) => (
+            <tr key={idx}>
+              <td>{row.strategy}</td>
+              <td>{row.accuracy.toFixed(1)}%</td>
+              <td className={row.net >= 0 ? 'text-success' : 'text-danger'}>
+                {row.net}
+              </td>
+              <td>{row.spins}</td>
             </tr>
-          </thead>
-          <tbody>
-            {results.map((r, i) => (
-              <tr key={i}>
-                <td>{r.strategy}</td>
-                <td>{r.wins}</td>
-                <td>{r.accuracy}%</td>
-                <td className={r.net >= 0 ? 'text-success' : 'text-danger'}>
-                  ${r.net}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

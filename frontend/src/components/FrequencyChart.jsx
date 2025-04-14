@@ -1,48 +1,32 @@
 import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-} from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const FrequencyChart = ({ history }) => {
-  const counts = Array(37).fill(0);
-  history.forEach((h) => counts[h.pocket]++);
+  const frequency = Array(37).fill(0);
+  history.forEach(item => frequency[item.pocket]++);
 
-  const data = {
-    labels: [...Array(37).keys()],
-    datasets: [
-      {
-        label: 'Frequency',
-        data: counts,
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 1 },
-      },
-    },
-  };
+  const max = Math.max(...frequency);
 
   return (
-    <div className="card mt-4 p-3">
-      <h5>📊 Frequency Chart</h5>
-      <Bar data={data} options={options} />
+    <div className="mt-5">
+      <h5 className="text-warning">📊 Pocket Frequency</h5>
+      <div className="d-flex align-items-end gap-1" style={{ height: 120, overflowX: 'auto' }}>
+        {frequency.map((count, i) => (
+          <div key={i} className="text-center" style={{ width: 14 }}>
+            <div
+              style={{
+                height: `${(count / (max || 1)) * 100}%`,
+                backgroundColor:
+                  i === 0 ? 'green' :
+                  [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36].includes(i)
+                    ? 'red' : 'black',
+                width: '100%',
+                borderRadius: '3px'
+              }}
+            />
+            <small className="d-block text-muted" style={{ fontSize: '10px' }}>{i}</small>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

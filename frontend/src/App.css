@@ -1,38 +1,81 @@
-.App {
-  text-align: center;
+body {
+  background-color: #0d0d26;
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1, h2, h3, h4, h5 {
+  text-shadow: 1px 1px 4px #000;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.card {
+  background-color: #1e1e2f;
+  border: 2px solid gold;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.btn {
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+.btn-success {
+  background: linear-gradient(45deg, #28a745, #218838);
+  color: #fff;
+}
+
+.btn-warning {
+  background: linear-gradient(45deg, #ffc107, #e0a800);
+  color: #000;
+}
+
+.badge {
+  font-size: 1rem;
+  padding: 0.6em;
+  border-radius: 6px;
+}
+
+.chip-icon {
+  width: 24px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.modal-content {
+  background-color: #292942;
+  border: 2px solid gold;
   color: white;
+  border-radius: 16px;
+  box-shadow: 0 0 12px gold;
 }
 
-.App-link {
-  color: #61dafb;
+.form-control,
+.form-select {
+  background-color: #151529;
+  border: 2px solid gold;
+  color: #fff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.form-control:focus,
+.form-select:focus {
+  border-color: #ffcc00;
+  box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+}
+
+.meter {
+  height: 12px;
+  background: #111;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 6px;
+  border: 1px solid #444;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, limegreen, gold);
+  transition: width 0.4s ease-in-out;
 }

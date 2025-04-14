@@ -2,15 +2,22 @@ import React from 'react';
 
 const ResultLog = ({ history }) => {
   return (
-    <div className="card mt-4">
-      <div className="card-header">📜 Spin History (Last 100)</div>
-      <ul className="list-group list-group-flush">
-        {history.map((item, idx) => (
-          <li key={idx} className="list-group-item">
-            <strong>{item.pocket}</strong> ({item.color}) – Ball: {item.ball_speed}, Wheel: {item.wheel_speed}, Friction: {item.friction}
-          </li>
+    <div className="mt-4">
+      <h5 className="text-warning">🎲 Spin History</h5>
+      <div className="d-flex flex-wrap gap-2">
+        {history.slice(0, 20).map((item, index) => (
+          <span
+            key={index}
+            className={`badge rounded-pill px-3 py-2 ${
+              item.color === 'red' ? 'bg-danger' :
+              item.color === 'black' ? 'bg-dark border border-light' :
+              'bg-success'
+            }`}
+          >
+            {item.pocket}
+          </span>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
